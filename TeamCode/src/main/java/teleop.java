@@ -244,9 +244,9 @@ public class teleop extends OpMode
         }
 
         if (gamepad1.x) {
-            lift1.setPosition(0.8);
-            lift2.setPosition(0.6);
-            lift3.setPosition(0.7);
+            lift1.setPosition(0.75);
+            lift2.setPosition(0.55);
+            lift3.setPosition(0.65);
         }
 
         //open close claw
