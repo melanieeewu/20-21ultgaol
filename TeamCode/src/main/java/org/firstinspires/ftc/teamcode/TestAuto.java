@@ -77,6 +77,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
+
 @Autonomous(name="TestAuto", group="Pushbot")
 public class TestAuto extends LinearOpMode {
 
@@ -170,6 +171,8 @@ public class TestAuto extends LinearOpMode {
         armMid();
 
         clawOpen();
+        
+        armDown();
 
         driveForward(0, false); //sleep
         sleep(100);
@@ -182,8 +185,6 @@ public class TestAuto extends LinearOpMode {
 
         turn(.50, false); //turn and shoot rings
         sleep(1240);
-
-        shootRing(1);
 
         shootRing(1);    //shoot ring????
         sleep(100);
@@ -401,16 +402,7 @@ public class TestAuto extends LinearOpMode {
             robot.rightBack.setPower(speed);
         }
     }
-
-    public void movePulley(double speed, boolean up){
-        if(up) {
-            robot.pulley.setPower(speed);
-
-        } else {
-            robot.pulley.setPower(-speed);
-
-        }
-    }
+    
 
     public void shootRing(double speed){
         robot.shooter.setPower(speed);
