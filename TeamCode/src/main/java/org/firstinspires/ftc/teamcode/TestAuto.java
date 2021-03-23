@@ -154,6 +154,9 @@ public class TestAuto extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
         //note: 250 per tile 1240 aprox 90 degrees/
+        armUp();
+
+        clawClose();
 
         driveForward(.50, false); //forward 3 tiles
         sleep(100);
@@ -163,6 +166,10 @@ public class TestAuto extends LinearOpMode {
 
         turn(.50, true); //turns to drop wobble goal
         sleep(1240);
+
+        armMid();
+
+        clawOpen();
 
         driveForward(0, false); //sleep
         sleep(100);
@@ -175,6 +182,8 @@ public class TestAuto extends LinearOpMode {
 
         turn(.50, false); //turn and shoot rings
         sleep(1240);
+
+        shootRing(1);
 
         shootRing(1);    //shoot ring????
         sleep(100);
@@ -406,6 +415,34 @@ public class TestAuto extends LinearOpMode {
     public void shootRing(double speed){
         robot.shooter.setPower(speed);
         robot.shooter2.setPower(speed);
+    }
+
+    public void armDown () {
+        robot.claw.setPosition(0);
+        robot.lift1.setPosition(0);
+        robot.lift2.setPosition(0);
+        robot.lift3.setPosition(0);
+    }
+    public void armMid () {
+        robot.claw.setPosition(1);
+        robot.lift1.setPosition(0.8);
+        robot.lift2.setPosition(0.6);
+        robot.lift3.setPosition(0.7);
+    }
+
+    public void armUp () {
+        robot.claw.setPosition(1);
+        robot.lift1.setPosition(1);
+        robot.lift2.setPosition(1);
+        robot.lift3.setPosition(1);
+    }
+
+    public void clawOpen () {
+        robot.claw.setPosition(1);
+    }
+
+    public void clawClose () {
+        robot.claw.setPosition(0);
     }
 
 
