@@ -410,20 +410,17 @@ public class TestAuto extends LinearOpMode {
     }
 
     public void armDown () {
-        robot.claw.setPosition(0);
         robot.lift1.setPosition(0);
         robot.lift2.setPosition(0);
         robot.lift3.setPosition(0);
     }
     public void armMid () {
-        robot.claw.setPosition(1);
         robot.lift1.setPosition(0.8);
         robot.lift2.setPosition(0.6);
         robot.lift3.setPosition(0.7);
     }
 
     public void armUp () {
-        robot.claw.setPosition(1);
         robot.lift1.setPosition(1);
         robot.lift2.setPosition(1);
         robot.lift3.setPosition(1);
