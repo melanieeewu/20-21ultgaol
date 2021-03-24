@@ -78,6 +78,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  */
 
 
+
 @Autonomous(name="TestAuto", group="Pushbot")
 public class TestAuto extends LinearOpMode {
 
@@ -94,7 +95,7 @@ public class TestAuto extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.7;     // Nominal speed for better accuracy.
+    static final double     DRIVE_SPEED             = 0.5;     // Nominal speed for better accuracy.
     static final double     TURN_SPEED              = 0.5;     // Nominal half speed for better accuracy.
 
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
@@ -154,36 +155,39 @@ public class TestAuto extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
-        //note: 250 per tile 1240 aprox 90 degrees/
+        //note: 250 per tile 1240 aprox 90 degrees ???
         armUp();
 
         clawClose();
 
-        driveForward(.50, false); //forward 3 tiles
+        driveForward(DRIVE_SPEED, false); //forward 3 tiles
         sleep(100);
 
         driveForward(0, false); //sleep
         sleep(100);
 
-        turn(.50, true); //turns to drop wobble goal
+        turn(DRIVE_SPEED, true); //turns to drop wobble goal
         sleep(1240);
 
         armMid();
 
         clawOpen();
-        
+
+        driveForward(0.2, true); //back up before droping the arm
+        sleep(100);
+
         armDown();
 
         driveForward(0, false); //sleep
         sleep(100);
 
-        driveForward(.50, false); //drives forward
+        driveForward(DRIVE_SPEED, false); //drives forward
         sleep(300);
 
         driveForward(0, false); //sleep
         sleep(100);
 
-        turn(.50, false); //turn and shoot rings
+        turn(TURN_SPEED, false); //turn and shoot rings
         sleep(1240);
 
         shootRing(1);    //shoot ring????
@@ -192,7 +196,7 @@ public class TestAuto extends LinearOpMode {
         driveForward(0, false); //sleep
         sleep(100);
 
-        driveForward(.50, false); //park?????
+        driveForward(DRIVE_SPEED, false); //park?????
         sleep(250);
 
         driveForward(0, false); //sleep
@@ -200,6 +204,7 @@ public class TestAuto extends LinearOpMode {
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+
     }
 // END OF AUTONOMOUS COMMANDS ----------------------------------------------------------------------
 
@@ -307,6 +312,8 @@ public class TestAuto extends LinearOpMode {
             robot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+
+
     }
 
     /**
@@ -402,7 +409,7 @@ public class TestAuto extends LinearOpMode {
             robot.rightBack.setPower(speed);
         }
     }
-    
+
 
     public void shootRing(double speed){
         robot.shooter.setPower(speed);
@@ -410,17 +417,20 @@ public class TestAuto extends LinearOpMode {
     }
 
     public void armDown () {
+        robot.claw.setPosition(0);
         robot.lift1.setPosition(0);
         robot.lift2.setPosition(0);
         robot.lift3.setPosition(0);
     }
     public void armMid () {
+        robot.claw.setPosition(1);
         robot.lift1.setPosition(0.8);
         robot.lift2.setPosition(0.6);
         robot.lift3.setPosition(0.7);
     }
 
     public void armUp () {
+        robot.claw.setPosition(1);
         robot.lift1.setPosition(1);
         robot.lift2.setPosition(1);
         robot.lift3.setPosition(1);
@@ -433,6 +443,8 @@ public class TestAuto extends LinearOpMode {
     public void clawClose () {
         robot.claw.setPosition(0);
     }
+
+
 
 
     /**
