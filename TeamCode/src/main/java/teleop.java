@@ -109,16 +109,15 @@ public class teleop extends OpMode
     @Override
     public void init() {
 
+//SHOOTER
         shooter = hardwareMap.dcMotor.get("shooter");
         shooter2 = hardwareMap.dcMotor.get("shooter2");
         shooter.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        pinwheel1 = hardwareMap.servo.get("pinwheel1");
-        pinwheel2 = hardwareMap.servo.get("pinwheel2");
 
         pulley = hardwareMap.dcMotor.get("pulley");
-
+//DRIVETRAIN
         leftFront = hardwareMap.dcMotor.get("leftFront");
         leftBack = hardwareMap.dcMotor.get("leftBack");
         rightBack = hardwareMap.dcMotor.get("rightBack");
@@ -127,18 +126,19 @@ public class teleop extends OpMode
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
-
+//WOBBLE GOAL
         lift1 = hardwareMap.servo.get("lift1");
         lift2= hardwareMap.servo.get("lift2");
         lift3= hardwareMap.servo.get("lift3");
-
-
-        intake = hardwareMap.dcMotor.get("intake");
-
         claw = hardwareMap.servo.get("claw");
 
+//INTAKE
+        intake = hardwareMap.dcMotor.get("intake");
         flicker = hardwareMap.servo.get("flicker");
+        pinwheel1 = hardwareMap.servo.get("pinwheel1");
+        pinwheel2 = hardwareMap.servo.get("pinwheel2");
     }
+
     @Override
     public void loop() {
         float x;
@@ -192,7 +192,6 @@ public class teleop extends OpMode
         //GAMEPAD 1 ------------------------------------------
 
         //INTAKE--------------------------------------------
-
         //intake pinwheels (moves in opposite directions)
         if((gamepad1.right_trigger) >0.1) {
             pinwheel2.setPosition(pinwheel2.getPosition() + 0.1);
@@ -206,7 +205,6 @@ public class teleop extends OpMode
             pinwheel2.setPosition(0.5);
             pinwheel1.setPosition(0.5);
         }
-
         //powers intake
         if (Math.abs(gamepad1.left_trigger) > .1) {
             intakePower = -1;
@@ -228,8 +226,6 @@ public class teleop extends OpMode
         }
 
         //WOBBLE GOAL-------------------------------
-
-        //UNDER REVISION
         if (gamepad1.a) {
             lift1.setPosition(1);
             lift2.setPosition(1);
@@ -261,6 +257,7 @@ public class teleop extends OpMode
             changed = false;
         }
 
+//-------------------------------------------------------------
         shooter.setPower(shooterPower);
         shooter2.setPower(shooterPower);
 

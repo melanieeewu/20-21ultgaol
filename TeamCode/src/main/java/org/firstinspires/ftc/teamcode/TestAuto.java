@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -37,7 +38,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -87,14 +87,14 @@ public class TestAuto extends LinearOpMode {
 
     static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder (was 1140)
     static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 6.0 ;     // For figuring circumference
+    static final double     WHEEL_DIAMETER_INCHES   = 2.95 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.7;     // Nominal speed for better accuracy.
-    static final double     TURN_SPEED              = 0.5;     // Nominal half speed for better accuracy.
+    static final double     DRIVE_SPEED             = 0.5;     // Nominal speed for better accuracy.
+    static final double     TURN_SPEED              = 0.15;     // Nominal half speed for better accuracy.
 
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
     static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
@@ -153,43 +153,55 @@ public class TestAuto extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         // Put a hold after each turn
-        //note: 250 per tile 1240 aprox 90 degrees/
+        //note: 285 per tile 1240 aprox 90 degrees ???
 
-        driveForward(.50, false); //forward 3 tiles
+  driveForward(DRIVE_SPEED, false); //forward 3 tiles
+        sleep(1000);
+
+     driveForward(0, false); //sleep
+        sleep(1000);
+
+        turn(TURN_SPEED, true); //turns to drop wobble goal
+        sleep(1310);
+
+        armMid();
+
+        clawOpen();
+
+   //     driveForward(0, false); //sleep
+    //    sleep(1000);
+
+
+     driveForward(DRIVE_SPEED, false); //sleep
+      sleep(500);
+
+    //  armUp();
+     // clawClose();
+
+     /*   driveForward(0, false); //sleep
         sleep(100);
 
-        driveForward(0, false); //sleep
-        sleep(100);
-
-        turn(.50, true); //turns to drop wobble goal
-        sleep(1240);
-
-        driveForward(0, false); //sleep
-        sleep(100);
-
-        driveForward(.50, false); //drives forward
-        sleep(300);
-
-        driveForward(0, false); //sleep
-        sleep(100);
-
-        turn(.50, false); //turn and shoot rings
+        turn(TURN_SPEED, false); //turn and shoot rings
         sleep(1240);
 
         shootRing(1);    //shoot ring????
-        sleep(100);
+        sleep(1240);
 
-        driveForward(0, false); //sleep
-        sleep(100);
 
-        driveForward(.50, false); //park?????
+     /*   driveForward(0, false); //sleep
+        sleep(1000);
+
+        driveForward(DRIVE_SPEED, false); //park?????
         sleep(250);
 
         driveForward(0, false); //sleep
-        sleep(100);
+        sleep(1000);
+*/
+
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+
     }
 // END OF AUTONOMOUS COMMANDS ----------------------------------------------------------------------
 
@@ -297,6 +309,8 @@ public class TestAuto extends LinearOpMode {
             robot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+
+
     }
 
     /**
@@ -393,21 +407,45 @@ public class TestAuto extends LinearOpMode {
         }
     }
 
-    public void movePulley(double speed, boolean up){
-        if(up) {
-            robot.pulley.setPower(speed);
-
-        } else {
-            robot.pulley.setPower(-speed);
-
-        }
-    }
 
     public void shootRing(double speed){
         robot.shooter.setPower(speed);
         robot.shooter2.setPower(speed);
     }
 
+    public void armDown () {
+        robot.lift1.setPosition(0);
+        robot.lift2.setPosition(0);
+        robot.lift3.setPosition(0);
+    }
+    public void armMid () {
+        robot.lift1.setPosition(0.8);
+        robot.lift2.setPosition(0.6);
+        robot.lift3.setPosition(0.7);
+    }
+
+    public void armUp () {
+        robot.lift1.setPosition(1);
+        robot.lift2.setPosition(1);
+        robot.lift3.setPosition(1);
+    }
+
+    public void clawOpen () {
+        robot.claw.setPosition(1);
+    }
+
+    public void clawClose () {
+        robot.claw.setPosition(0);
+    }
+
+
+public void flicker (boolean up) {
+    if (up) {
+        robot.flicker.setPosition(1);
+    } else {
+        robot.flicker.setPosition(0.5);
+    }
+}
 
     /**
      * Perform one cycle of closed loop heading control.
