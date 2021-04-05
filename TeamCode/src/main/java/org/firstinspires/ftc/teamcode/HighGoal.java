@@ -31,15 +31,12 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -77,8 +74,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="TestAuto", group="Pushbot")
-public class TestAuto extends LinearOpMode {
+@Autonomous(name="HighGoal", group="Pushbot")
+public class HighGoal extends LinearOpMode {
 
     /* Declare OpMode members. */
     pushbotHardware robot   = new pushbotHardware();   // Use a Pushbot's hardware
@@ -155,12 +152,12 @@ public class TestAuto extends LinearOpMode {
         // Put a hold after each turn
         //note: 285 per tile 1240 aprox 90 degrees ???
 
- clawClose();
+clawClose();
         armDown();
         sleep(100);
 
-        driveForward(DRIVE_SPEED, false); //forward 3 tiles
-        sleep(730);
+      driveForward(DRIVE_SPEED, false); //forward 3 tiles
+        sleep(735);
 
         driveForward(0, false); //sleep
         sleep(1000);
@@ -171,38 +168,72 @@ public class TestAuto extends LinearOpMode {
         turn(0, false); //sleep
         sleep(1000);
 //------------------------------------everything up works lol
-      clawOpen();
+    clawOpen();
         armMid();
-        sleep(1310);
+     sleep(1310);
 
-armDown();
-clawClose();
- sleep(1310);
+    armDown();
+    clawClose();
+    sleep(1310);
 
-        driveForward(DRIVE_SPEED, true); //sleep
-        sleep(500);
+     driveForward(DRIVE_SPEED, true); //sleep
+        sleep(320);
 
         driveForward(0, false); //sleep
         sleep(1500);
 
-
         turn(TURN_SPEED, false);
-        sleep(1623);
+        sleep(1575);
 
         turn(0, true); //turns to drop wobble goal
         sleep(1000);
+
+
+pulley(0.25);
+sleep(270);
+
+pulley(0);
+sleep(100);
 
         shootRing(1);    //shoot ring????
         sleep(1000);
 
         flicker();
-        sleep(100);
+        sleep(10);
 
         shootRing(0.7);    //shoot ring????cv
         sleep(1000);
 
         flickerDown();
+        sleep(10);
+
+        shootRing(1);    //shoot ring????
+        sleep(1000);
+
+        flicker();
+        sleep(10);
+
+        shootRing(0.7);    //shoot ring????cv
+        sleep(1000);
+
+        flickerDown();
+        sleep(10);
+
+        shootRing(1);    //shoot ring????
+        sleep(1000);
+
+        flicker();
+        sleep(10);
+
+        shootRing(1);    //shoot ring????cv
+        sleep(1000);
+
+        flickerDown();
         sleep(100);
+
+   driveForward(DRIVE_SPEED, false); //sleep
+        sleep(300);
+
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -234,6 +265,7 @@ clawClose();
         double  steer;
         double  leftSpeed;
         double  rightSpeed;
+
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
@@ -290,6 +322,7 @@ clawClose();
                 robot.leftBack.setPower(leftSpeed);
                 robot.rightFront.setPower(rightSpeed);
                 robot.rightBack.setPower(rightSpeed);
+
 
                 // Display drive status for the driver.
                 telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
@@ -454,7 +487,9 @@ clawClose();
         robot.flicker.setPosition(1);
     }
 
-
+    public void pulley(double speed) {
+        robot.pulley.setPower(-speed);
+    }
 
 
 

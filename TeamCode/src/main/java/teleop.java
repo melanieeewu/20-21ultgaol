@@ -123,8 +123,8 @@ public class teleop extends OpMode
         rightBack = hardwareMap.dcMotor.get("rightBack");
         rightFront = hardwareMap.dcMotor.get("rightFront");
 
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
 //WOBBLE GOAL
         lift1 = hardwareMap.servo.get("lift1");
@@ -147,20 +147,20 @@ public class teleop extends OpMode
 
         //GAMEPAD 2 ------------------------------------------
         //drivetrain
-        if (Math.abs(gamepad2.left_stick_x) > .1) {
-            x = gamepad2.left_stick_x;
+        if (Math.abs(gamepad2.right_stick_x) > .1) {
+            x = gamepad2.right_stick_x;
         } else {
             x = 0;
         }
 
         if (Math.abs(gamepad2.left_stick_y) > .1) {
-            y = -gamepad2.left_stick_y;
+            y = gamepad2.left_stick_y;
         } else {
             y = 0;
         }
 
-        if (Math.abs(gamepad2.right_stick_x) > .1) {
-            z = -gamepad2.right_stick_x;
+        if (Math.abs(gamepad2.left_stick_x) > .1) {
+            z = gamepad2.left_stick_x;
         } else {
             z = 0;
         }
@@ -182,11 +182,15 @@ public class teleop extends OpMode
 
         //shooter
         if (gamepad2.x) {
-            shooterPower = 1;
+            shooterPower = 0.7;
 
         } else if (gamepad2.y){
             shooterPower = 0;
 
+        }
+
+        if(gamepad2.a){
+            shooterPower = 1;
         }
 
         //GAMEPAD 1 ------------------------------------------
@@ -265,11 +269,11 @@ public class teleop extends OpMode
 
         intake.setPower(intakePower);
 
-        leftBack.setPower((x - y - z)*.75);
-        leftFront.setPower((-x - y -z)*.75);
+        leftBack.setPower((y - x + z)*.75);
+        leftFront.setPower((y + x - z)*.75);
 
-        rightBack.setPower((-x - y + z)*.75);
-        rightFront.setPower((x - y + z)*.75);
+        rightBack.setPower((y - x - z)*.75);
+        rightFront.setPower((y + x + z)*.75);
 
 
     }

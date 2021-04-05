@@ -106,7 +106,7 @@ public class pushbotHardware {
 
         claw = hardwareMap.servo.get("claw");
 
-        lift1 = hardwareMap.servo.get("lift");
+        lift1 = hardwareMap.servo.get("lift1");
         lift2= hardwareMap.servo.get("lift2");
         lift3= hardwareMap.servo.get("lift3");
 
