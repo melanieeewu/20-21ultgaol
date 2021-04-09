@@ -90,8 +90,8 @@ public class HighGoal extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.4;     // Nominal speed for better accuracy.
-    static final double     TURN_SPEED              = 0.05;     // Nominal half speed for better accuracy.
+    static final double     DRIVE_SPEED             = 0.2;     // Nominal speed for better accuracy.
+    static final double     TURN_SPEED              = 0.03;     // Nominal half speed for better accuracy.
 
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
     static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
@@ -157,17 +157,17 @@ clawClose();
         sleep(100);
 
       driveForward(DRIVE_SPEED, false); //forward 3 tiles
-        sleep(735);
+        sleep(1470);
 
         driveForward(0, false); //sleep
         sleep(1000);
 
         turn(TURN_SPEED, true); //turns to drop wobble goal
-        sleep(1570);
+        sleep(1590);
 
         turn(0, false); //sleep
         sleep(1000);
-//------------------------------------everything up works lol
+
     clawOpen();
         armMid();
      sleep(1310);
@@ -177,7 +177,7 @@ clawClose();
     sleep(1310);
 
      driveForward(DRIVE_SPEED, true); //sleep
-        sleep(320);
+        sleep(640);
 
         driveForward(0, false); //sleep
         sleep(1500);
@@ -190,7 +190,7 @@ clawClose();
 
 
 pulley(0.25);
-sleep(270);
+sleep(250);
 
 pulley(0);
 sleep(100);
@@ -232,7 +232,7 @@ sleep(100);
         sleep(100);
 
    driveForward(DRIVE_SPEED, false); //sleep
-        sleep(300);
+        sleep(600);
 
 
         telemetry.addData("Path", "Complete");

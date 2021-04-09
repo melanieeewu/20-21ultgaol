@@ -198,7 +198,6 @@ clawClose();
         sleep(100);
 
 
-
         telemetry.addData("Path", "Complete");
         telemetry.update();
 
