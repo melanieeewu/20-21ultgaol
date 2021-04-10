@@ -162,7 +162,7 @@ clawClose();
         driveForward(0, false); //sleep
         sleep(1000);
 
-        
+
         turn(TURN_SPEED, true); //turns to drop wobble goal
         sleep(1600);
 
