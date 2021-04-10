@@ -157,14 +157,14 @@ clawClose();
         sleep(100);
 
       driveForward(DRIVE_SPEED, false); //forward 3 tiles
-        sleep(1880);
+        sleep(2050);
 
         driveForward(0, false); //sleep
         sleep(1000);
 
 
         turn(TURN_SPEED, true); //turns to drop wobble goal
-        sleep(1600);
+        sleep(1590);
 
         turn(0, false); //sleep
         sleep(1000);
@@ -184,14 +184,14 @@ clawClose();
         sleep(1500);
 
         turn(TURN_SPEED, false);
-        sleep(1575);
+        sleep(1570);
 
         turn(0, true); //turns to drop wobble goal
         sleep(1000);
 
 
 pulley(0.25);
-sleep(350);
+sleep(370);
 
 pulley(0);
 sleep(100);
@@ -233,7 +233,7 @@ sleep(100);
         sleep(100);
 
    driveForward(DRIVE_SPEED, false); //sleep
-        sleep(800);
+        sleep(1000 );
 
 
         telemetry.addData("Path", "Complete");
