@@ -90,8 +90,8 @@ public class HighGoal extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.2;     // Nominal speed for better accuracy.
-    static final double     TURN_SPEED              = 0.03;     // Nominal half speed for better accuracy.
+    static final double     DRIVE_SPEED             = 0.07;     // Nominal speed for better accuracy.
+    static final double     TURN_SPEED              = 0.05;     // Nominal half speed for better accuracy.
 
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
     static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
@@ -157,18 +157,19 @@ clawClose();
         sleep(100);
 
       driveForward(DRIVE_SPEED, false); //forward 3 tiles
-        sleep(1470);
+        sleep(1880);
 
         driveForward(0, false); //sleep
         sleep(1000);
 
+        
         turn(TURN_SPEED, true); //turns to drop wobble goal
-        sleep(1590);
+        sleep(1600);
 
         turn(0, false); //sleep
         sleep(1000);
 
-    clawOpen();
+   clawOpen();
         armMid();
      sleep(1310);
 
@@ -176,8 +177,8 @@ clawClose();
     clawClose();
     sleep(1310);
 
-     driveForward(DRIVE_SPEED, true); //sleep
-        sleep(640);
+     driveForward(0.05, true); //sleep
+        sleep(1580);
 
         driveForward(0, false); //sleep
         sleep(1500);
@@ -190,7 +191,7 @@ clawClose();
 
 
 pulley(0.25);
-sleep(250);
+sleep(350);
 
 pulley(0);
 sleep(100);
@@ -232,7 +233,7 @@ sleep(100);
         sleep(100);
 
    driveForward(DRIVE_SPEED, false); //sleep
-        sleep(600);
+        sleep(800);
 
 
         telemetry.addData("Path", "Complete");
@@ -295,7 +296,7 @@ sleep(100);
             robot.rightFront.setPower(speed);
             robot.rightBack.setPower(speed);
 
-            // keep looping while we are still active, and BOTH motors are running.
+            // keep looping while we are still 0active, and BOTH motors are running.
             while (opModeIsActive() &&
                     (robot.leftFront.isBusy() && robot.leftBack.isBusy() && robot.rightFront.isBusy() && robot.rightBack.isBusy())) {
 
