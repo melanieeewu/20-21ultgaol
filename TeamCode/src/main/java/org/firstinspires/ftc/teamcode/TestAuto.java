@@ -79,225 +79,182 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
 
 
-@Autonomous(name="TestAuto", group="Pushbot")
-public class TestAuto extends LinearOpMode {
+@Autonomous(name="Pushbot: Auto Drive By Encoder", group="pushbotHardware")
+public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     pushbotHardware robot   = new pushbotHardware();   // Use a Pushbot's hardware
-    BNO055IMU imu;
-    //ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
+    private ElapsedTime     runtime = new ElapsedTime();
 
-    static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder (was 1140)
-    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-    static final double     WHEEL_DIAMETER_INCHES   = 6.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_MOTOR_REV    = 58 ;    // eg: TETRIX Motor Encoder
+    static final double    DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   =2.95 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1415);
-
-    // These constants define the desired driving/control characteristics
-    // The can/should be tweaked to suite the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.5;     // Nominal speed for better accuracy.
-    static final double     TURN_SPEED              = 0.5;     // Nominal half speed for better accuracy.
-
-    static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
-    static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
-    static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
-
+                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     DRIVE_SPEED             = 0.5;
+    static final double     TURN_SPEED              = 0.25;
 
     @Override
     public void runOpMode() {
 
         /*
-         * Initialize the standard drive system variables.
-         * The init() method of the hardware class does most of the work here
+         * Initialize the drive system variables.
+         * The init() method of the hardware class does all the work here
          */
         robot.init(hardwareMap);
 
-        // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
+        // Send telemetry message to signify robot waiting;
+        telemetry.addData("Status", "Resetting Encoders");    //
+        telemetry.update();
+
         robot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Send telemetry message to alert driver that we are calibrating;
-        telemetry.addData(">", "Calibrating Gyro");    //
-        telemetry.update();
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled = true;
-        parameters.loggingTag = "IMU";
-        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator(); // alt + enter for shortcut to import smthn
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        imu.initialize(parameters);
-
-
-        telemetry.addData(">", "Robot Ready.");    //
-        telemetry.update();
-
-        waitForStart();
+        robot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         robot.leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Wait for the game to start (Display Gyro value), and reset gyro before we move..
-        while (!isStarted()) {
-            telemetry.addData(">", "Robot Heading = %d", imu.getAngularOrientation());
-            telemetry.update();
-        }
+        telemetry.update();
 
-// AUTONOMOUS COMMANDS -----------------------------------------------------------------------------
+        // Wait for the game to start (driver presses PLAY)
+        waitForStart();
+
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        // Put a hold after each turn
-        //note: 250 per tile 1240 aprox 90 degrees ???
-        armUp();
+       // encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+        //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
+       // encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        //encoderDrive(TURN_SPEED,  -12, 12, 4.0);  // S2: Turn  left
 
-        clawClose();
 
-        driveForward(DRIVE_SPEED, false); //forward 3 tiles
+      //  robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
+      //  robot.rightClaw.setPosition(0.0);
+       // sleep(1000);     // pause for servos to move
+
+        encoderDrive(DRIVE_SPEED,  36,  36, 5.0);  // go up 3 tiles
+        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // turn right
+
+        robot.lift1.setPosition(0.75);                                            //drop off wobble goal
+        robot.lift2.setPosition(0.75);
+        robot.lift3.setPosition(0.75);
+        sleep(1000);
+
+        robot.claw.setPosition(1);
+        sleep(1000);
+
+        robot.lift1.setPosition(0);                                            //drop off wobble goal
+        robot.lift2.setPosition(0);
+        robot.lift3.setPosition(0);
+        sleep(1000);
+
+        robot.claw.setPosition(0);
+        sleep(1000);
+
+        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  //goes backwards
+        encoderDrive(TURN_SPEED,   -12, 12, 4.0);  // turns left to shoot
+
+        pulley(0.25);
+        sleep(370);
+
+        pulley(0);
         sleep(100);
-
-        driveForward(0, false); //sleep
-        sleep(100);
-
-        turn(DRIVE_SPEED, true); //turns to drop wobble goal
-        sleep(1240);
-
-        armMid();
-
-        clawOpen();
-
-        driveForward(0.2, true); //back up before droping the arm
-        sleep(100);
-
-        armDown();
-
-        driveForward(0, false); //sleep
-        sleep(100);
-
-        driveForward(DRIVE_SPEED, false); //drives forward
-        sleep(300);
-
-        driveForward(0, false); //sleep
-        sleep(100);
-
-        turn(TURN_SPEED, false); //turn and shoot rings
-        sleep(1240);
 
         shootRing(1);    //shoot ring????
-        sleep(100);
+        sleep(1000);
 
-        driveForward(0, false); //sleep
-        sleep(100);
+        robot.flicker.setPosition(0);
+        sleep(10);
 
-        driveForward(DRIVE_SPEED, false); //park?????
-        sleep(250);
+        shootRing(0.7);    //shoot ring????cv
+        sleep(1000);
 
-        driveForward(0, false); //sleep
-        sleep(100);
+        robot.flicker.setPosition(1);
+        sleep(10);
+
+        shootRing(1);    //shoot ring????
+        sleep(1000);
+
+        robot.flicker.setPosition(0);
+        sleep(10);
+
+        shootRing(0.7);    //shoot ring????cv
+        sleep(1000);
+
+        robot.flicker.setPosition(1);
+        sleep(10);
+
+        shootRing(1);    //shoot ring????
+        sleep(1000);
+
+        robot.flicker.setPosition(0);
+        sleep(10);
+
+        shootRing(1);    //shoot ring????cv
+        sleep(1000);
+
+        robot.flicker.setPosition(1);
+        sleep(10);
+
+        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  //park
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
-
     }
-// END OF AUTONOMOUS COMMANDS ----------------------------------------------------------------------
 
-    /**
-     *  Method to drive on a fixed compass bearing (angle), based on encoder counts.
-     *  Move will stop if either of these conditions occur:
+    /*
+     *  Method to perform a relative move, based on encoder counts.
+     *  Encoders are not reset as the move is based on the current position.
+     *  Move will stop if any of three conditions occur:
      *  1) Move gets to the desired position
-     *  2) Driver stops the opmode running.
-     *
-     * @param speed      Target speed for forward motion.  Should allow for _/- variance for adjusting heading
-     * @param distance   Distance (in inches) to move from current position.  Negative distance means move backwards.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
+     *  2) Move runs out of time
+     *  3) Driver stops the opmode running.
      */
-    public void gyroDrive ( double speed,
-                            double distance,
-                            double angle) {
-
-        int     newLeftTarget;
-        int     newRightTarget;
-        int     moveCounts;
-        double  max;
-        double  error;
-        double  steer;
-        double  leftSpeed;
-        double  rightSpeed;
+    public void encoderDrive(double speed,
+                             double leftInches, double rightInches,
+                             double timeoutS) {
+        int newLeftTarget;
+        int newRightTarget;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            moveCounts = (int)(distance * COUNTS_PER_INCH);
-            newLeftTarget = robot.leftFront.getCurrentPosition() + moveCounts;
-            newRightTarget = robot.leftBack.getCurrentPosition() + moveCounts;
-            newLeftTarget = robot.rightFront.getCurrentPosition() + moveCounts;
-            newRightTarget = robot.rightBack.getCurrentPosition() + moveCounts;
-
-            // Set Target and Turn On RUN_TO_POSITION
+            newLeftTarget = robot.leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newLeftTarget = robot.leftBack.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightTarget = robot.rightFront.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newRightTarget = robot.rightBack.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             robot.leftFront.setTargetPosition(newLeftTarget);
-            robot.leftBack.setTargetPosition(newRightTarget);
-            robot.rightFront.setTargetPosition(newLeftTarget);
+            robot.leftBack.setTargetPosition(newLeftTarget);
+            robot.rightFront.setTargetPosition(newRightTarget);
             robot.rightBack.setTargetPosition(newRightTarget);
 
+            // Turn On RUN_TO_POSITION
             robot.leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.leftBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.rightBack.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            // start motion.
-            speed = Range.clip(Math.abs(speed), 0.0, 1.0);
-            robot.leftFront.setPower(speed);
-            robot.leftBack.setPower(speed);
-            robot.rightFront.setPower(speed);
-            robot.rightBack.setPower(speed);
 
-            // keep looping while we are still active, and BOTH motors are running.
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.leftFront.setPower(Math.abs(speed));
+            robot.leftBack.setPower(Math.abs(speed));
+            robot.rightFront.setPower(Math.abs(speed));
+            robot.rightBack.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                    (robot.leftFront.isBusy() && robot.leftBack.isBusy() && robot.rightFront.isBusy() && robot.rightBack.isBusy())) {
+                   (runtime.seconds() < timeoutS) &&
+                   (robot.leftFront.isBusy() && robot.rightBack.isBusy())) {
 
-                // adjust relative speed based on heading error.
-                error = getError(angle);
-                steer = getSteer(error, P_DRIVE_COEFF);
-
-                // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
-                    steer *= -1.0;
-
-                leftSpeed = speed - steer;
-                rightSpeed = speed + steer;
-
-                // Normalize speeds if either one exceeds +/- 1.0;
-                max = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
-                if (max > 1.0)
-                {
-                    leftSpeed /= max;
-                    rightSpeed /= max;
-                }
-
-                robot.leftFront.setPower(leftSpeed);
-                robot.leftBack.setPower(leftSpeed);
-                robot.rightFront.setPower(rightSpeed);
-                robot.rightBack.setPower(rightSpeed);
-
-                // Display drive status for the driver.
-                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "%7d:%7d",      newLeftTarget,  newRightTarget);
-                telemetry.addData("Actual",  "%7d:%7d",      robot.leftFront.getCurrentPosition(),
-                        robot.leftBack.getCurrentPosition(),
-                        robot.rightFront.getCurrentPosition(),
-                        robot.rightBack.getCurrentPosition());
-                telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
-                telemetry.update();
             }
 
             // Stop all motion;
@@ -311,213 +268,23 @@ public class TestAuto extends LinearOpMode {
             robot.leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //  sleep(250);   // optional pause after each move
+
+
         }
 
 
     }
-
-    /**
-     *  Method to spin on central axis to point in a new direction.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the heading (angle)
-     *  2) Driver stops the opmode running.
-     *
-     * @param speed Desired speed of turn.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     */
-    public void gyroTurn (  double speed, double angle) {
-
-        // keep looping while we are still active, and not on heading.
-        while (opModeIsActive() && !onHeading(speed, angle, P_TURN_COEFF)) {
-            // Update telemetry & Allow time for other processes to run.
-            telemetry.update();
-        }
-    }
-
-    /**
-     *  Method to obtain & hold a heading for a finite amount of time
-     *  Move will stop once the requested time has elapsed
-     *
-     * @param speed      Desired speed of turn.
-     * @param angle      Absolute Angle (in Degrees) relative to last gyro reset.
-     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                   If a relative angle is required, add/subtract from current heading.
-     * @param holdTime   Length of time (in seconds) to hold the specified heading.
-     */
-    public void gyroHold( double speed, double angle, double holdTime) {
-
-        ElapsedTime holdTimer = new ElapsedTime();
-
-        // keep looping while we have time remaining.
-        holdTimer.reset();
-        while (opModeIsActive() && (holdTimer.time() < holdTime)) {
-            // Update telemetry & Allow time for other processes to run.
-            onHeading(speed, angle, P_TURN_COEFF);
-            telemetry.update();
-        }
-
-        // Stop all motion;
-        robot.leftFront.setPower(0);
-        robot.leftBack.setPower(0);
-        robot.rightFront.setPower(0);
-        robot.rightBack.setPower(0);
-    }
-
-
-    // METHODS -------------------------------------------------------------------------------------
-
-    public void driveForward(double speed, boolean forward) {
-        if (forward) {
-            robot.leftFront.setPower(speed);
-            robot.rightFront.setPower(speed);
-            robot.leftBack.setPower(speed);
-            robot.rightBack.setPower(speed);
-        } else {
-            robot.leftFront.setPower(-speed);
-            robot.rightFront.setPower(-speed);
-            robot.leftBack.setPower(-speed);
-            robot.rightBack.setPower(-speed);
-        }
-    }
-
-    public void turn(double speed, boolean turnRight){
-        if (turnRight) {
-            robot.leftFront.setPower(speed);
-            robot.rightFront.setPower(-speed);
-            robot.leftBack.setPower(speed);
-            robot.rightBack.setPower(-speed);
-        } else {
-            robot.leftFront.setPower(-speed);
-            robot.rightFront.setPower(speed);
-            robot.leftBack.setPower(-speed);
-            robot.rightBack.setPower(speed);
-        }
-    }
-
-    public void strafe(double speed, boolean leftStrafe){
-        if(leftStrafe) {
-            robot.leftFront.setPower(-speed);
-            robot.rightFront.setPower(speed);
-            robot.leftBack.setPower(speed);
-            robot.rightBack.setPower(-speed);
-        } else {
-            robot.leftFront.setPower(speed);
-            robot.rightFront.setPower(-speed);
-            robot.leftBack.setPower(-speed);
-            robot.rightBack.setPower(speed);
-        }
-    }
-
 
     public void shootRing(double speed){
         robot.shooter.setPower(speed);
         robot.shooter2.setPower(speed);
     }
 
-    public void armDown () {
-        robot.claw.setPosition(0);
-        robot.lift1.setPosition(0);
-        robot.lift2.setPosition(0);
-        robot.lift3.setPosition(0);
-    }
-    public void armMid () {
-        robot.claw.setPosition(1);
-        robot.lift1.setPosition(0.8);
-        robot.lift2.setPosition(0.6);
-        robot.lift3.setPosition(0.7);
-    }
-
-    public void armUp () {
-        robot.claw.setPosition(1);
-        robot.lift1.setPosition(1);
-        robot.lift2.setPosition(1);
-        robot.lift3.setPosition(1);
-    }
-
-    public void clawOpen () {
-        robot.claw.setPosition(1);
-    }
-
-    public void clawClose () {
-        robot.claw.setPosition(0);
-    }
-
-
-
-
-    /**
-     * Perform one cycle of closed loop heading control.
-     *
-     * @param speed     Desired speed of turn.
-     * @param angle     Absolute Angle (in Degrees) relative to last gyro reset.
-     *                  0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *                  If a relative angle is required, add/subtract from current heading.
-     * @param PCoeff    Proportional Gain coefficient
-     * @return
-     */
-    boolean onHeading(double speed, double angle, double PCoeff) {
-        double   error ;
-        double   steer ;
-        boolean  onTarget = false ;
-        double leftSpeed;
-        double rightSpeed;
-
-        // determine turn power based on +/- error
-        error = getError(angle);
-
-        if (Math.abs(error) <= HEADING_THRESHOLD) {
-            steer = 0.0;
-            leftSpeed  = 0.0;
-            rightSpeed = 0.0;
-            onTarget = true;
-        }
-        else {
-            steer = getSteer(error, PCoeff);
-            rightSpeed  = speed * steer;
-            leftSpeed   = -rightSpeed;
-        }
-
-        // Send desired speeds to motors.
-        robot.leftFront.setPower(leftSpeed);
-        robot.leftBack.setPower(rightSpeed);
-        robot.rightFront.setPower(leftSpeed);
-        robot.rightBack.setPower(rightSpeed);
-
-        // Display it for the driver.
-        telemetry.addData("Target", "%5.2f", angle);
-        telemetry.addData("Err/St", "%5.2f/%5.2f", error, steer);
-        telemetry.addData("Speed.", "%5.2f:%5.2f", leftSpeed, rightSpeed);
-
-        return onTarget;
-    }
-
-    /**
-     * getError determines the error between the target angle and the robot's current heading
-     * @param   targetAngle  Desired angle (relative to global reference established at last Gyro Reset).
-     * @return  error angle: Degrees in the range +/- 180. Centered on the robot's frame of reference
-     *          +ve error means the robot should turn LEFT (CCW) to reduce error.
-     */
-    public double getError(double targetAngle) {
-
-        double robotError;
-
-        // calculate error in -179 to +180 range  (
-        robotError = targetAngle - imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-        while (robotError > 180)  robotError -= 360;
-        while (robotError <= -180) robotError += 360;
-        return robotError;
-    }
-
-    /**
-     * returns desired steering force.  +/- 1 range.  +ve = steer left
-     * @param error   Error angle in robot relative degrees
-     * @param PCoeff  Proportional Gain Coefficient
-     * @return
-     */
-    public double getSteer(double error, double PCoeff) {
-        return Range.clip(error * PCoeff, -1, 1);
+    public void pulley(double speed) {
+        robot.pulley.setPower(-speed);
     }
 
 }
+
